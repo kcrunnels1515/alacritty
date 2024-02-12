@@ -29,6 +29,7 @@ use alacritty_terminal::tty;
 
 mod cli;
 mod clipboard;
+mod genconfig;
 mod config;
 mod daemon;
 mod display;
@@ -53,8 +54,10 @@ mod gl {
     include!(concat!(env!("OUT_DIR"), "/gl_bindings.rs"));
 }
 
+use crate::genconfig::genconf;
 #[cfg(unix)]
 use crate::cli::MessageOptions;
+use crate::cli::GenConfigOptions;
 use crate::cli::{Options, Subcommands};
 use crate::config::{monitor, UiConfig};
 use crate::event::{Event, Processor};
@@ -80,6 +83,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         #[cfg(unix)]
         Some(Subcommands::Msg(options)) => msg(options)?,
         Some(Subcommands::Migrate(options)) => migrate::migrate(options),
+        Some(Subcommands::GenConfig(options)) => genconf(options)?,
         None => alacritty(options)?,
     }
 

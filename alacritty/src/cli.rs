@@ -28,11 +28,15 @@ pub struct Options {
     #[clap(long)]
     pub ref_test: bool,
 
+    /// Generates default config file
+    #[clap(long, value_hint = ValueHint::FilePath)]
+    pub gen_config: Option<PathBuf>,
+
     /// X11 window ID to embed Alacritty within (decimal or hexadecimal with "0x" prefix).
     #[clap(long)]
     pub embed: Option<String>,
 
-    /// Specify alternative configuration file [default:
+    /// Specify alternative configuration file [defult:
     /// $XDG_CONFIG_HOME/alacritty/alacritty.toml].
     #[cfg(not(any(target_os = "macos", windows)))]
     #[clap(long, value_hint = ValueHint::FilePath)]
@@ -229,6 +233,7 @@ pub enum Subcommands {
     #[cfg(unix)]
     Msg(MessageOptions),
     Migrate(MigrateOptions),
+    GenConfig(GenConfigOptions),
 }
 
 /// Send a message to the Alacritty socket.
@@ -277,6 +282,18 @@ pub struct MigrateOptions {
     #[clap(short, long)]
     /// Do not output to STDOUT.
     pub silent: bool,
+}
+
+/// Generate Default configuration file
+#[derive(Args, Clone, Debug)]
+pub struct GenConfigOptions {
+    /// Path to the configuration file
+    #[clap(short, long, value_hint = ValueHint::FilePath)]
+    pub config_file: Option<PathBuf>,
+
+    /// Only output TOML config to STDOUT.
+    #[clap(short, long)]
+    pub dry_run: bool,
 }
 
 /// Subset of options that we pass to 'create-window' IPC subcommand.
